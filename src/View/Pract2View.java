@@ -2,24 +2,45 @@ package View;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 
 public class Pract2View extends JFrame {
+    private JButton btnCargar;
+    private JButton btnGrises;
+    private JLabel labelImagen;
+
     public Pract2View() {
-        //Ajustes de ventana
-        super("Práctica 2: Generación del Histograma");
-        setSize(1280, 720);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+        super("Práctica 2: Generacion del Histograma");
+        this.btnCargar = new JButton("Cargar Imagen");
+        this.btnGrises = new JButton("Convertir a Escala de Grises");
+        this.labelImagen = new JLabel("", JLabel.CENTER);
 
-        //Panel de prueba
-        JPanel jPanel1 = new JPanel();
-        jPanel1.setLayout(new FlowLayout());
+        JPanel panelBotones = new JPanel();
+        panelBotones.add(btnCargar);
+        panelBotones.add(btnGrises);
 
-        JLabel label1 = new JLabel("Angel Puto");
-        jPanel1.add(label1);
+        this.add(panelBotones, BorderLayout.SOUTH);
+        this.add(new JScrollPane(labelImagen), BorderLayout.CENTER);
 
-        add(jPanel1);
-        //Establecer visibiliad
-        setVisible(true);
+        this.setSize(1280, 720);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setLocationRelativeTo(null);
+    }
+
+    public void mostrarImagen(BufferedImage img) {
+        labelImagen.setIcon(new ImageIcon(img));
+    }
+
+    public void mostrarError(String mensaje) {
+        JOptionPane.showMessageDialog(null, mensaje, "ERROR", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void addBtnCargarListener(ActionListener listener) {
+        btnCargar.addActionListener(listener);
+    }
+
+    public void addBtnGrisesListener(ActionListener listener) {
+        btnGrises.addActionListener(listener);
     }
 }
