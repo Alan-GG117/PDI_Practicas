@@ -49,25 +49,25 @@ public class HistogramUtils {
         int totalPixeles = img.getWidth() * img.getHeight();
         double media = 0, varianza = 0, energia = 0, entropia = 0;
 
-        //Probabilidades de cada nivel
+        // Probabilidades de cada nivel (Corrección 1: Cast directo)
         double[] pr = new double[256];
         for (int i = 0; i < 256; i++) {
-            pr[i] = (double)(hist[i] / totalPixeles);
+            pr[i] = (double) hist[i] / (double) totalPixeles;
         }
 
-        //Media ponderada
+        // Media ponderada
         for (int i = 0; i < 256; i++) {
             media += i * pr[i];
         }
 
-        //Varianza
+        // Varianza (Corrección 2: Signo +=)
         for (int i = 0; i < 256; i++) {
-            varianza = Math.pow(i-media, 2) * pr[i];
+            varianza += Math.pow(i-media, 2) * pr[i];
         }
 
         double desviacion = Math.sqrt(varianza);
 
-        //Energía y entropía
+        // Energía y entropía
         for(int i = 0; i < 256; i++) {
             energia += pr[i] * pr[i];
             if(pr[i] > 0) {
@@ -77,12 +77,13 @@ public class HistogramUtils {
 
         entropia *= -1;
 
+        // Propiedades del histograma (Corrección 3: Saltos de línea \n)
         return "Propiedades del histograma: \n" +
-                String.format("Media: %.2f", media)
-                + String.format("Varianza: %.2f",varianza)
-                + String.format("Desviacion: %.2f", desviacion)
-                + String.format("Energía: %.4f", energia)
-                + String.format("Entropía: %.4f", entropia);
+                String.format("Media: %.2f\n", media) +
+                String.format("Varianza: %.2f\n", varianza) +
+                String.format("Desviacion: %.2f\n", desviacion) +
+                String.format("Energía: %.4f\n", energia) +
+                String.format("Entropía: %.4f\n", entropia);
     }
 
     public static String calcularPropiedades(int[][] histRGB, BufferedImage img) {
@@ -102,7 +103,7 @@ public class HistogramUtils {
         int[] prob = new int[256];
 
         for (int i = 0; i < 256; i++) {
-            prob[i] = (int) (((double) hist[i] / totalPixeles) * 1000);
+            prob[i] = (int) (((double) hist[i] / (double) totalPixeles) * 1000);
         }
         return prob;
     }
@@ -113,11 +114,24 @@ public class HistogramUtils {
         int[] densidad = new int[256];
 
         for (int i = 0; i < 256; i++) {
-            p[i] = (double) hist[i] / totalPixeles;
+            p[i] = (double) hist[i] / (double) totalPixeles;
+        }
+
+        double[] densidadCruda = new double[256];
+        double maxDensidad = 0;
+        for (int i = 0; i < 256; i++) {
+            densidadCruda[i] = p[i] * p[i];
+            if (densidadCruda[i] > maxDensidad) {
+                maxDensidad = densidadCruda[i];
+            }
         }
 
         for (int i = 0; i < 256; i++) {
-            densidad[i] = (int) (p[i] * p[i] * 1000);
+            if (maxDensidad > 0) {
+                densidad[i] = (int) ((densidadCruda[i] / maxDensidad) * 1000);
+            } else {
+                densidad[i] = 0;
+            }
         }
         return densidad;
     }
